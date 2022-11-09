@@ -2,12 +2,13 @@
 #include "ui_MainWindow.h"
 
 #include <QDebug>
-#include <QTimer>
 #include <QGraphicsProxyWidget>
 #include <QWebEnginePage>
 #include <QWebEngineView>
 #include <QWebEngineScript>
 #include <QWebEngineScriptCollection>
+#include <QWindow>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,19 +16,39 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    QGraphicsScene* scene = new QGraphicsScene();
-    QGraphicsProxyWidget* proxy = new QGraphicsProxyWidget();
-    QWebEngineView* view = new QWebEngineView();
+    scene = new QGraphicsScene();
+    proxy = new QGraphicsProxyWidget();
+    view = new QWebEngineView();
+
     proxy->setWidget(view);
     scene->addItem(proxy);
     proxy->setPos(-400, -300);
     proxy->resize(800, 600);
     ui->graphicsView->setScene(scene);
+
+    QWindow* window = view->windowHandle();
+    window->installEventFilter(this);
+
     view->load(QUrl("https://www.w3schools.com/cssref/tryit.php?filename=trycss_cursor"));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *ev)
+{
+    if (ev->type() == QEvent::CursorChange)
+    {
+        QWindow* window = dynamic_cast<QWindow*>(obj);
+
+        if (window)
+        {
+            proxy->setCursor(window->cursor());
+        }
+    }
+
+    return false;
 }
 
