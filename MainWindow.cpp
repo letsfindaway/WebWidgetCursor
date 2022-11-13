@@ -5,8 +5,6 @@
 #include <QGraphicsProxyWidget>
 #include <QWebEnginePage>
 #include <QWebEngineView>
-#include <QWebEngineScript>
-#include <QWebEngineScriptCollection>
 #include <QWindow>
 
 
@@ -22,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     proxy->setWidget(view);
     scene->addItem(proxy);
-    proxy->setPos(-400, -300);
     proxy->resize(800, 600);
     ui->graphicsView->setScene(scene);
 
@@ -49,6 +46,6 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *ev)
         }
     }
 
-    return false;
+    return QMainWindow::eventFilter(obj, ev);
 }
 
